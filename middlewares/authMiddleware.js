@@ -3,14 +3,13 @@ const pool = require('../config/db');
 
 const authenticate = async (req, res, next) => {
   const token = req.headers['authorization'];
-  console.log(213123, token)
+
   if (!token) {
     return res.status(403).json({ message: 'No token provided' });
   }
 
   try {
     const bearer = token.split(' ')[1];
-    console.log(bearer)
     const decoded = jwt.verify(bearer, process.env.JWT_SECRET);
     const user = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.user_id]);
 
