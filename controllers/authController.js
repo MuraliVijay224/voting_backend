@@ -7,6 +7,12 @@ const registerUser = async (req, res) => {
   const { username, password, role_id } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+
+  if(user.rows.length > 0){
+    res.status(409).json({ message: 'User Already Exists' });
+    return;
+  }
 
   try {
     const newUser = await pool.query(
